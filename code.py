@@ -51,9 +51,10 @@ class Validator(Protocol):
         except Exception as e:
             result.errors = str(e)
         return result
-
-class Reporter(Protocol):
-    def report(self, result: ParseResult) -> str: ...
+    
+class ReporterText(Protocol):
+    def report(self, result: ParseResult) -> str:
+        return "\n".join([str(record) for record in result.records])
 
 class Pipeline:
     def __init__(self, parser: Parser, validator: Validator, reporter: Reporter) -> None: ...
