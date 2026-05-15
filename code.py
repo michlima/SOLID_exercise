@@ -9,12 +9,16 @@ class ParseResult:
 class ParseCSV(Protocol):
     def parse(self, raw: str) -> ParseResult:
         newParse = ParseResult()
-        lines = raw.split("\n")
-        records = [line.split(",") for line in lines if line]
-        with open("output.log", "a") as f:
-            f.write(str(records) + "\n")
-        newParse.records = records
-        return newParse
+        try:
+            lines = raw.split("\n")
+            records = [line.split(",") for line in lines if line]
+            with open("output.log", "a") as f:
+                f.write(str(records) + "\n")
+            newParse.records = records
+            return newParse
+        except Exception as e:
+            newParse.errors = e
+            return newParse
 
 class Validator(Protocol):
     def validate(self, result: ParseResult) -> ParseResult: ...
