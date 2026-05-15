@@ -1,5 +1,6 @@
 from typing import Protocol
 from dataclasses import dataclass, field
+import json
 
 @dataclass
 class ParseResult:
@@ -9,11 +10,20 @@ class ParseResult:
 class ParseCSV(Protocol):
     def parse(self, raw: str) -> ParseResult:
         newParse = ParseResult()
+        lines = raw.split("\n")
+        records = [line.split(",") for line in lines if line]
+        with open("output.log", "a") as f:
+            f.write(str(records) + "\n")
+        newParse.records = records
+        return newParse
+    
+class ParseJSON(Protocol):
+    def parse(self, raw:str) -> ParseResult:
+        
+        newParse = ParseResult()
         try:
-            lines = raw.split("\n")
-            records = [line.split(",") for line in lines if line]
-            with open("output.log", "a") as f:
-                f.write(str(records) + "\n")
+            records = json.loads(raw)
+            print(records)
             newParse.records = records
             return newParse
         except Exception as e:
