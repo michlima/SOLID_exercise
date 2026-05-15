@@ -65,6 +65,14 @@ class Validator(Protocol):
 class ReporterText(Protocol):
     def report(self, result: ParseResult) -> str:
         return "\n".join([str(record) for record in result.records])
+    
+class ReporterHTML(Protocol):
+    def report(self, result: ParseResult) -> str:
+        output = "<ul>"
+        for record in records:
+            output += "<li>" + str(record) + "</li>"
+        output += "</ul>"
+        return output
 
 class Pipeline:
     def __init__(self, parser: Parser, validator: Validator, reporter: Reporter) -> None: ...
