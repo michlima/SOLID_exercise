@@ -1,3 +1,35 @@
+from typing import Protocol
+from dataclasses import dataclass, field
+
+@dataclass
+class ParseResult:
+    records: list[dict]
+    errors: list[str] = field(default_factory=list)
+
+class ParseCSV(Protocol):
+    def parse(self, raw: str) -> ParseResult:
+        newParse = ParseResult()
+        try:
+            lines = raw.split("\n")
+            records = [line.split(",") for line in lines if line]
+            with open("output.log", "a") as f:
+                f.write(str(records) + "\n")
+            newParse.records = records
+            return newParse
+        except Exception as e:
+            newParse.errors = e
+            return newParse
+
+class Validator(Protocol):
+    def validate(self, result: ParseResult) -> ParseResult: ...
+
+class Reporter(Protocol):
+    def report(self, result: ParseResult) -> str: ...
+
+class Pipeline:
+    def __init__(self, parser: Parser, validator: Validator, reporter: Reporter) -> None: ...
+    def run(self, raw: str) -> str: ...
+
 class DataProcessor:
     def process(self, raw_data, format, validate=False):
         if format == "csv":
