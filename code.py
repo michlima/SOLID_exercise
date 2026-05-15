@@ -20,6 +20,21 @@ class ParseCSV(Protocol):
             newParse.errors = e
             return newParse
 
+class ParseXML(Protocol):
+    def parse(self,raw: str) -> ParseResult:
+        newParse = ParseResult()
+        try:
+            records = []
+            for chunk in raw.split("<record>"):
+                if "</record>" in chunk:
+                    value = chunk.split("</record>")[0]
+                    records.append(value.split("<field>"))
+            newParse.records = records
+        except Exception as e:
+            newParse.errors = str(e)
+        
+        return newParse
+
 class Validator(Protocol):
     def validate(self, result: ParseResult) -> ParseResult: ...
 
