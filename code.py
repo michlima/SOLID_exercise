@@ -46,7 +46,21 @@ class ParseXML(Protocol):
         return newParse
 
 class Validator(Protocol):
-    def validate(self, result: ParseResult) -> ParseResult: ...
+    def validate(self, result: ParseResult) -> ParseResult:
+        cleaned = []
+        try: 
+            for record in result.records:
+                if record:
+                    valid = True
+                    for field in record:
+                        if field == "":
+                            valid = False
+                    if valid:
+                        cleaned.append(record)
+            result.records = cleaned
+        except Exception as e:
+            result.errors = str(e)
+        return result
 
 class Reporter(Protocol):
     def report(self, result: ParseResult) -> str: ...
