@@ -24,12 +24,11 @@ class ParseJSON(Protocol):
         try:
             records = json.loads(raw)
             print(records)
-            newParse.records
+            newParse.records = records
             return newParse
         except Exception as e:
             newParse.errors = e
             return newParse
-
 
 class Validator(Protocol):
     def validate(self, result: ParseResult) -> ParseResult: ...
