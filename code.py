@@ -1,5 +1,6 @@
 from typing import Protocol
 from dataclasses import dataclass, field
+import json
 
 @dataclass
 class ParseResult:
@@ -15,6 +16,20 @@ class ParseCSV(Protocol):
             f.write(str(records) + "\n")
         newParse.records = records
         return newParse
+    
+class ParseJSON(Protocol):
+    def parse(self, raw:str) -> ParseResult:
+        
+        newParse = ParseResult()
+        try:
+            records = json.loads(raw)
+            print(records)
+            newParse.records
+            return newParse
+        except Exception as e:
+            newParse.errors = e
+            return newParse
+
 
 class Validator(Protocol):
     def validate(self, result: ParseResult) -> ParseResult: ...
